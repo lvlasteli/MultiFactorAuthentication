@@ -1,0 +1,15 @@
+# deps
+node_modules
+
+# logs
+logs
+*.log
+npm-debug.log*
+
+# editors
+.idea
+*.sublime-*
+.vscode
+
+# general
+.DS_Store
