@@ -1,6 +1,7 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h3>Homepage</h3>
+    <img alt="Vue logo" src="../assets/logo.png">
     <p>Two Factor Authentication</p>
     
   </div>
@@ -9,7 +10,7 @@
 <script>
 
 export default {
-  name: 'Homepage',
+  name: 'home',
   props: {
     msg: String
   }
