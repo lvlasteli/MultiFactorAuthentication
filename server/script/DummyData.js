@@ -1,19 +1,37 @@
 const User = require('../user/user.model');
 const database = require('../databaseconnection');
+const Sequelize = require('sequelize');
+const bcrypt = require('bcrypt');
 
-//dummy data
+let pass1="";
+let pass2 ="";
+
 Promise.all([
-    User.create({
-        id: '1',
-        userName: 'lvlasteli',
-        password: 'sifra1950',
-        twoFactorAuth: 'true'
-    }),
-    User.create({
-        id: '2',
-        userName: 'mdgekic',
-        password: 'sifra123',
-        twoFactorAuth: 'false'
-    })
-])
-.then(() => database.close());
+    bcrypt.hash('sifra1950',10).then((hash => {
+        pass1 = hash;
+    })),
+    bcrypt.hash('sifra1234',10).then((hash => {
+        pass2 = hash;
+    }))
+]).then(()=> {
+    //dummy data
+    Promise.all([
+        User.create({
+            id: Sequelize.fn( 'RANDOM' ),
+            username: 'lvlasteli',
+            password: pass1  ,
+            twofactorauth: 'true'
+        }),
+        User.create({
+            id: Sequelize.fn( 'RANDOM' ),
+            username: 'mgekic',
+            password: pass2,
+            twofactorauth: 'false'
+        })
+    ])
+    .then(() => database.close())
+})
+
+
+
+

@@ -5,5 +5,5 @@ const database =new Sequelize('2FactorAuth', 'postgres', 'axeq627a', {
     host: 'localhost',
     dialect: 'postgres' 
 });
-
+//default port is 8000
 module.exports = database;

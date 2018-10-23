@@ -4,11 +4,17 @@ const database = require('../databaseconnection');
 const User = database.define('user', {
     id: {
         type: Sequelize.STRING,
-        primaryKey: true
+        primaryKey: true,
     },
-    userName: Sequelize.STRING,
-    password: Sequelize.STRING,
-    twoFactorAuth: Sequelize.BOOLEAN
+    username: {
+        type: Sequelize.STRING,
+        required: true
+    },
+    password: {
+        type: Sequelize.STRING,
+        required: true
+    },
+    twofactorauth: Sequelize.BOOLEAN
     
 });
 
