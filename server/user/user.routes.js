@@ -4,6 +4,7 @@ const Sequelize = require('sequelize');
 //const database = require('../databaseconnection');
 const User = require('./user.model');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 router.post('/signup', (req, res) => {
     //check if we already have that user
@@ -54,7 +55,18 @@ router.post('/login', (req, res) => {
                 return res.status(401).json({ message: 'Authorization failed'});
             }
             if (result) {
-                return res.status(200).json({ message: 'Authorization successful'})
+                const token = jwt.sign({
+                    email: user.email,
+                    id: user.id
+                    //need to change!!!
+                }, "ExampleofaSecret", 
+                {
+                    expiresIn: "1h"
+                });
+                return res.status(200).json({ 
+                    message: 'Authorization successful',
+                    token: token
+                });
             }
             res.status(401).json({ message: 'Authorization failed'});
         })
