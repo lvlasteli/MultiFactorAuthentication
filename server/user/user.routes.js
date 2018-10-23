@@ -15,7 +15,7 @@ router.post('/signup', (req, res) => {
             return res.status(409).json({message: 'User already exists'})
         }
         else {
-             //hasing password with 10 randoms string
+             //hasing password with 10 random strings
              bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if(err) {
                     return res.status(500).json({ error: err});
@@ -31,7 +31,7 @@ router.post('/signup', (req, res) => {
                         res.status(201).json({
                             message: 'User Created'
                         });
-                    }).catch(err => {
+                    }).catch((err) => {
                         console.log(err);
                         res.status(500).json({error: err});
                     });
@@ -40,5 +40,28 @@ router.post('/signup', (req, res) => {
         }
     });
 });
-
+router.post('/login', (req, res) => {
+    User.findOne({
+        where: { email: req.body.email }
+    })
+    .then((user) => {
+        if(user === null) {
+            //bad for brute force attack to return message user doesnt exist
+            return res.status(401).json({ message: 'Authorization failed'});
+        }
+        bcrypt.compare(req.body.password, user.password, (err, result) => {
+            if(err) {
+                return res.status(401).json({ message: 'Authorization failed'});
+            }
+            if (result) {
+                return res.status(200).json({ message: 'Authorization successful'})
+            }
+            res.status(401).json({ message: 'Authorization failed'});
+        })
+    })
+    .catch((err) => {
+        console.log(err);
+        res.status(500).json({error: err});
+    });
+});
 module.exports = router;
