@@ -1,10 +1,11 @@
 <template>
 <v-form ref="form">
+  <h1> Login </h1>
     <v-container>
-        <v-flex xs12 sm6>
+        <v-flex sm12>
             <v-text-field
-            v-model="username"
-            label="Username"
+            v-model="email"
+            label="Email"
             required>
             </v-text-field>
             <v-text-field
@@ -30,7 +31,7 @@ export default {
   data() {
     return {
         show1: false,
-        username: '',
+        email: '',
         password: ''
     };
   },

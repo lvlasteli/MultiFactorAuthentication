@@ -6,6 +6,7 @@
     <v-spacer></v-spacer>
     <v-toolbar-items>
       <v-btn flat @click="goTo('login')">Login</v-btn>
+      <v-btn flat @click="goTo('signup')">Sign Up</v-btn>
     </v-toolbar-items>
   </v-toolbar>
 </template>
