@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express');
 const router =  express.Router();
 const Sequelize = require('sequelize');
@@ -5,6 +6,9 @@ const Sequelize = require('sequelize');
 const User = require('./user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const checkAuth = require('../middleware/check-auth');
+
+require('dotenv').config();
 
 router.post('/signup', (req, res) => {
     //check if we already have that user
@@ -55,11 +59,11 @@ router.post('/login', (req, res) => {
                 return res.status(401).json({ message: 'Authorization failed'});
             }
             if (result) {
+                //creation of token
                 const token = jwt.sign({
                     email: user.email,
                     id: user.id
-                    //need to change!!!
-                }, "ExampleofaSecret", 
+                }, process.env.JWT_KEY, 
                 {
                     expiresIn: "1h"
                 });
@@ -76,4 +80,9 @@ router.post('/login', (req, res) => {
         res.status(500).json({error: err});
     });
 });
+router.post('/qrcode', checkAuth, (req, res) => {
+    return res.status(200).json({ message: "Token confirmed"})
+    //generation of qrcode
+})
+
 module.exports = router;

@@ -17,6 +17,7 @@
     "@babel/polyfill": "^7.0.0-rc.1",
     "bcrypt": "^3.0.2",
     "body-parser": "^1.18.3",
+    "dotenv": "^6.1.0",
     "eslint": "^5.7.0",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.3.0",
@@ -35,6 +36,7 @@
     "@vue/cli-plugin-babel": "^3.0.5",
     "@vue/cli-plugin-eslint": "^3.0.4",
     "@vue/cli-service": "^3.0.4",
+    "node-env-run": "^3.0.2",
     "vue-cli-plugin-vuetify": "^0.2.1",
     "vue-template-compiler": "^2.5.17"
   },
