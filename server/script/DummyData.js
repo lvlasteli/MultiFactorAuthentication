@@ -19,12 +19,14 @@ Promise.all([
         User.create({
             id: Sequelize.fn( 'RANDOM' ),
             username: 'lvlasteli',
+            email: 'lvlast00@fesb.hr',
             password: pass1  ,
             twofactorauth: 'true'
         }),
         User.create({
             id: Sequelize.fn( 'RANDOM' ),
             username: 'mgekic',
+            email: 'mgekic00@fesb.hr',
             password: pass2,
             twofactorauth: 'false'
         })
