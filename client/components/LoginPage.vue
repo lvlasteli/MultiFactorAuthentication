@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
   name: 'login',
@@ -37,14 +38,13 @@ export default {
   },
   methods: {
       submit () {
-        // if (this.$refs.form.validate()) {
-        //   // Native form submission is not yet supported
-        //   axios.post('/api/submit', {
-        //     name: this.username,
-        //     password: this.password,
-        //   })
-        // }
-        window.alert("Username:"+ this.username + "\nPassword:"+this.password);
+        // Native form submission is not yet supported
+        axios.post("http://localhost:8000/user/", {
+          name: this.email,
+          password: this.password,
+        }).then((result) => {
+          window.aler(result);
+        })
       },
       clear () {
         this.$refs.form.reset()
