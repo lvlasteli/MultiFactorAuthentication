@@ -38,13 +38,22 @@ export default {
   },
   methods: {
       submit () {
+        const headers = {'Content-Type': 'application/json'};
+        const data = {
+            'email': this.email,
+            'password': this.password
+          }
         // Native form submission is not yet supported
-        axios.post("http://localhost:8000/user/", {
-          name: this.email,
-          password: this.password,
-        }).then((result) => {
-          window.aler(result);
-        })
+        axios.post(process.env.VUE_APP_API_LOGIN_URL, data, {
+           headers: headers }
+        ).then((response) => {
+          const token = response.data.token;
+          if(token) {
+            localStorage.setItem("token", token);
+          }
+        }).catch(err => {
+          window.aler(err)
+        });
       },
       clear () {
         this.$refs.form.reset()

@@ -37,13 +37,16 @@
 </template>
 
 <script>
+  import { SingUp } from '../api/user.js'
 
   export default {
     data: () => ({
-      valid: true,
-      name: '',
+      show1: false,
+      valid: false,
+      password: '',
+      username: '',
       nameRules: [
-        v => !!v || 'Name is required',
+        v => !!v || 'Userame is required',
         v => (v && v.length <= 10) || 'Name must be less than 10 characters'
       ],
       email: '',
@@ -55,6 +58,13 @@
 
     methods: {
       submit () {
+        const data = {
+          "email": this.email,
+          "username": this.username,
+          "password": this.password
+        }
+
+        SingUp(data);
 
       },
       clear () {

@@ -13,7 +13,7 @@ require('dotenv').config();
 router.post('/signup', (req, res) => {
     //check if we already have that user
     User.findOne({
-        where: {username: req.body.username}
+        where: {email: req.body.email}
         }).then((user) => {
         // check if user exists in database
         if(user!== null) {
