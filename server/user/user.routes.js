@@ -13,7 +13,7 @@ require('dotenv').config();
 router.post('/signup', (req, res) => {
     //check if we already have that user
     User.findOne({
-        where: {username: req.body.username}
+        where: {email: req.body.email}
         }).then((user) => {
         // check if user exists in database
         if(user!== null) {
@@ -38,7 +38,7 @@ router.post('/signup', (req, res) => {
                         });
                     }).catch((err) => {
                         console.log(err);
-                        res.status(500).json({error: err});
+                        res.status(500).json({message: 'User already exists'});
                     });
                 }
             });
@@ -72,7 +72,9 @@ router.post('/login', (req, res) => {
                     token: token
                 });
             }
-            res.status(401).json({ message: 'Authorization failed'});
+            console.log("ode san zapea jel da");
+            return res.status(401).json({
+                message: 'Authorization failed'});
         })
     })
     .catch((err) => {
