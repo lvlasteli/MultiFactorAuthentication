@@ -38,7 +38,7 @@ router.post('/signup', (req, res) => {
                         });
                     }).catch((err) => {
                         console.log(err);
-                        res.status(500).json({error: err});
+                        res.status(500).json({message: 'User already exists'});
                     });
                 }
             });
@@ -72,7 +72,9 @@ router.post('/login', (req, res) => {
                     token: token
                 });
             }
-            res.status(401).json({ message: 'Authorization failed'});
+            console.log("ode san zapea jel da");
+            return res.status(401).json({
+                message: 'Authorization failed'});
         })
     })
     .catch((err) => {

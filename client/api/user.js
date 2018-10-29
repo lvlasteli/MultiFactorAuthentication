@@ -4,34 +4,32 @@ require('dotenv').config();
 const headers = {'Content-Type': 'application/json'};
 
 export function LoginUser(data){
-    axios.post(process.env.VUE_APP_API_LOGIN_URL, data, { headers: headers }
+    return axios.post(process.env.VUE_APP_API_LOGIN_URL, data, { headers: headers }
      ).then((response) => {
        const token = response.data.token;
        localStorage.setItem('token', token);
-       return token;
+       return response.data.message;
      }).catch(err => {
-        return console.log(err);
+        return err.message;
      });
 }
-export function SingUp(data){
-  axios.post(process.env.VUE_APP_API_SIGNUP_URL, data, { headers: headers }
+export async function SingUp(data){
+  return axios.post(process.env.VUE_APP_API_SIGNUP_URL, data, { headers: headers }
     ).then((response) => {
-      const message =JSON.stringify(response)
-      console.log(message.data.message);
+      return response.data.message;
     }).catch(err => {
-       return console.log(err.message);
+       return err.message;
     });
 
 }
 export function GetQrCode(data) {
   const token = localStorage.getItem('token');
   const authHeader = {'Authorization': `Bearer ${token}`};
-  axios.post(process.env.VUE_APP_API_QRCODE_URL, data, { headers: authHeader }
+  return axios.post(process.env.VUE_APP_API_QRCODE_URL, data, { headers: authHeader }
   ).then((response) => {
-    const message = response.message;
-    return console.log(message);
+    return response.data.message;
   }).catch(err => {
-     return console.log(err);
+     return err.message;
   });
 
 }

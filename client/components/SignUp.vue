@@ -2,7 +2,8 @@
   <v-form ref="form" v-model="valid" lazy-validation>
       <v-container>
         <h1>Sign Up </h1>
-        <v-flex xs12>
+        <p> {{ userMessage }}</p>
+        <v-flex xs12 sm6 offset-sm3>
             <v-text-field
             v-model="username"
             :rules="nameRules"
@@ -38,9 +39,11 @@
 
 <script>
   import { SingUp } from '../api/user.js'
+import { setTimeout } from 'timers';
 
   export default {
     data: () => ({
+      userMessage: '',
       show1: false,
       valid: false,
       password: '',
@@ -63,12 +66,20 @@
           "username": this.username,
           "password": this.password
         }
-
-        SingUp(data);
-
+        const message=SingUp(data);
+        message.then((result) => {
+          this.userMessage = result;
+          if(result === "User Created")
+          {
+            setTimeout(()=> {
+            this.$router.replace({ name: 'login' });
+            }, 2000);
+          }
+        });
       },
       clear () {
-        this.$refs.form.reset()
+        this.userMessage = '';
+        this.$refs.form.reset();
       }
     }
   }

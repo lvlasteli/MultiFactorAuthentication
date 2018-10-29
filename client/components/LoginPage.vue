@@ -1,8 +1,9 @@
 <template>
 <v-form ref="form">
-  <h1> Login </h1>
     <v-container>
-        <v-flex sm12>
+      <h1> Login </h1>
+      <p> {{ userMessage }} </p>
+        <v-flex xs12 sm6 offset-sm3>
             <v-text-field
             v-model="email"
             label="Email"
@@ -25,12 +26,13 @@
 </template>
 
 <script>
-import axios from 'axios';
+import { LoginUser } from '../api/user';
 
 export default {
   name: 'login',
   data() {
     return {
+        userMessage:'',
         show1: false,
         email: '',
         password: ''
@@ -38,25 +40,30 @@ export default {
   },
   methods: {
       submit () {
-        const headers = {'Content-Type': 'application/json'};
         const data = {
             'email': this.email,
             'password': this.password
-          }
-        // Native form submission is not yet supported
-        axios.post(process.env.VUE_APP_API_LOGIN_URL, data, {
-           headers: headers }
-        ).then((response) => {
-          const token = response.data.token;
-          if(token) {
-            localStorage.setItem("token", token);
-          }
-        }).catch(err => {
-          window.aler(err)
-        });
+          };
+          const message=LoginUser(data);
+          message.then((result) => {
+            if(result==='Authorization successful')
+            {
+              this.userMessage = result;
+              // const token=localStorage.getItem('token');
+              //needed code to check if user has enabled 2FA
+              //when response is returned redirect him to qrcode page
+              setTimeout(()=> {
+                this.$router.replace({ name: 'qrcode' });
+                }, 3000);
+            }
+            else{
+              this.userMessage = 'Autorization Failed';
+            }
+          });
       },
       clear () {
-        this.$refs.form.reset()
+        this.userMessage = '';
+        this.$refs.form.reset();
       }
   }
 };
