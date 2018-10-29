@@ -57,7 +57,7 @@ export default {
                 }, 3000);
             }
             else{
-              this.userMessage = 'Autorization Failed';
+              this.userMessage = 'Authorization Failed';
             }
           });
       },
