@@ -13,7 +13,7 @@ npm-debug.log*
 # general
 .DS_Store
 
-# local env files
+# env
 .env
 
 

@@ -54,7 +54,7 @@ export default {
               //when response is returned redirect him to qrcode page
               setTimeout(()=> {
                 this.$router.replace({ name: 'qrcode' });
-                }, 3000);
+                }, 1500);
             }
             else{
               this.userMessage = 'Authorization Failed';

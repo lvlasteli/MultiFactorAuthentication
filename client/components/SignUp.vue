@@ -73,7 +73,7 @@ import { setTimeout } from 'timers';
           {
             setTimeout(()=> {
             this.$router.replace({ name: 'login' });
-            }, 2000);
+            }, 1500);
           }
         });
       },
