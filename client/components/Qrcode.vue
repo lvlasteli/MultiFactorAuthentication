@@ -28,14 +28,20 @@ export default {
                 console.log(skey);
                 if (skey === null)
                 {
-                    console.log("ne postoji");
+                    RequestSecretKey();
                 } else {
-                    console.log("postoji");
+                    GenerateQRCode();
                 }
             }
         });
     },
     methods: {
+        RequestSecretKey() {
+
+        },
+        GenerateQRCode() {
+            
+        }
 
     }
 }
