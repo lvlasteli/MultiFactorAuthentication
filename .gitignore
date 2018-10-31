@@ -13,7 +13,4 @@ npm-debug.log*
 # general
 .DS_Store
 
-# env
 .env
-
-
