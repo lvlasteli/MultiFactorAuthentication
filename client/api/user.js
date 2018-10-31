@@ -23,16 +23,14 @@ export async function SingUp(data){
     });
 
 }
-export function GetQrCode() {
+export function GetQrCode(data) {
   const token = localStorage.getItem('token');
   const useremail= localStorage.getItem('useremail');
-  //izmini bearer
   const authHeader = {'Authorization': `${useremail} ${token}`};
-  return axios.post(process.env.VUE_APP_API_QRCODE_URL, { headers: authHeader }
+  return axios.post(process.env.VUE_APP_API_QRCODE_URL, data, { headers: authHeader }
   ).then((response) => {
-    return response.data.qrcode;
+    return response.data;
   }).catch(err => {
      return err.message;
   });
-
 }

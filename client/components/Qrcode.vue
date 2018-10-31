@@ -4,6 +4,7 @@
             <v-flex xs12 sm6 offset-sm3>
                 <h2>QR Code</h2>
                 <p> Enabled: {{ message }} </p>
+                <canvas id="canvas"></canvas>
             </v-flex>
         </v-container>
     </v-form>
@@ -11,38 +12,26 @@
 
 <script>
 import { GetQrCode } from '../api/user.js';
+import QRCode from 'qrcode';
+
 export default {
     name: 'qrcode',
     data() {
         return {
             message:'',
+            QRCode: ''
         }
     },
     created: function()
     {
         const res = GetQrCode();
         res.then((response) => {
-            this.message = response;
-            if (response === true ) {
-                const skey = localStorage.getItem('secretKey');
-                console.log(skey);
-                if (skey === null)
-                {
-                    RequestSecretKey();
-                } else {
-                    GenerateQRCode();
-                }
+            console.log(response);
+            this.message = response.enabled;
+            if ( response.enabled === true ) {
+                QRCode.toCanvas(document.getElementById('canvas'), response.qrcode);
             }
         });
-    },
-    methods: {
-        RequestSecretKey() {
-
-        },
-        GenerateQRCode() {
-            
-        }
-
     }
 }
 </script>

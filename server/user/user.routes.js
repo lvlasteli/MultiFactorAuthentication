@@ -4,9 +4,10 @@ const router =  express.Router();
 const Sequelize = require('sequelize');
 //const database = require('../databaseconnection');
 const User = require('./user.model');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
+const QRCode = require('../script/GenerateSharedSecret');
 
 require('dotenv').config();
 
@@ -17,7 +18,7 @@ router.post('/signup', (req, res) => {
         }).then((user) => {
         // check if user exists in database
         if(user!== null) {
-            return res.status(409).json({message: 'User already exists'})
+            return res.status(409).json({message: 'User already exists'});
         }
         else {
              //hasing password with 10 random strings
@@ -88,12 +89,12 @@ router.post('/qrcode', checkAuth, (req, res) => {
         const twofa = result.twofactorauth;
         if(twofa === true)
         {
-            //generate secret key and send it to client
-            return res.status(200).json({ message: "Token confirmed and your QrCode is" , qrcode: twofa });
+            const qr = QRCode(userEmail);
+            return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: qr });
         }
         else
         {
-            return res.status(200).json({ message: "Token confirmed but 2FA is not required" , qrcode: twofa });            
+            return res.status(200).json({ message: "Token confirmed but 2FA is not required" , enabled: twofa });            
         }
     });
 })
