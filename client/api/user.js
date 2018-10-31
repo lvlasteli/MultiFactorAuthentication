@@ -8,6 +8,7 @@ export function LoginUser(data){
      ).then((response) => {
        const token = response.data.token;
        localStorage.setItem('token', token);
+       localStorage.setItem('useremail', data.email);
        return response.data.message;
      }).catch(err => {
         return err.message;
@@ -24,10 +25,12 @@ export async function SingUp(data){
 }
 export function GetQrCode(data) {
   const token = localStorage.getItem('token');
-  const authHeader = {'Authorization': `Bearer ${token}`};
+  const useremail= localStorage.getItem('useremail');
+  //izmini bearer
+  const authHeader = {'Authorization': `${useremail} ${token}`};
   return axios.post(process.env.VUE_APP_API_QRCODE_URL, data, { headers: authHeader }
   ).then((response) => {
-    return response.data.message;
+    return response.data.qrcode;
   }).catch(err => {
      return err.message;
   });

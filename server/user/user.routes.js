@@ -72,7 +72,6 @@ router.post('/login', (req, res) => {
                     token: token
                 });
             }
-            console.log("ode san zapea jel da");
             return res.status(401).json({
                 message: 'Authorization failed'});
         })
@@ -83,8 +82,20 @@ router.post('/login', (req, res) => {
     });
 });
 router.post('/qrcode', checkAuth, (req, res) => {
-    return res.status(200).json({ message: "Token confirmed"})
-    //generation of qrcode
+    const userEmail = req.headers.authorization.split(" ")[0];
+    User.findOne({ where: { email: userEmail } })
+    .then((result) => {
+        const twofa = result.twofactorauth;
+        if(twofa === true)
+        {
+            //generate secret key and send it to client
+            return res.status(200).json({ message: "Token confirmed and your QrCode is" , qrcode: twofa });
+        }
+        else
+        {
+            return res.status(200).json({ message: "Token confirmed but 2FA is not required" , qrcode: twofa });            
+        }
+    });
 })
 
 module.exports = router;
