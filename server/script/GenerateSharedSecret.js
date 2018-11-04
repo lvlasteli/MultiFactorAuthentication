@@ -1,23 +1,29 @@
-//const QRCode = require('qrcode');
-// const crypto = require('crypto');
+const crypto = require('crypto');
+const User = require('../user/user.model');
 require('dotenv').config();
 
-function GenerateSharedKey(useremail) {
-    const appsecret = process.env.SHARED_KEY + useremail;
-    // const prime_length = 512;
-    // const diffHell = crypto.createDiffieHellman(prime_length);
+function GetUserID(useremail)
+{
+    return User.findOne( {where: { email: useremail } })
+    .then((result) => {
+        return result.id;
+    })
+    .catch((err) => {
+        return err;
+    });
+}
 
-    // diffHell.generateKeys('base64');
-    // console.log("Public Key : " ,diffHell.getPublicKey('base64'));
-    // console.log("Private Key : " ,diffHell.getPrivateKey('base64'));
 
-    // console.log("Public Key : " ,diffHell.getPublicKey('hex'));
-    // console.log("Private Key : " ,diffHell.getPrivateKey('hex'));
-    // let qrcode= '';
-    // QRCode.toString(appsecret, (err, url) => {
-    //     qrcode = url;
-    // });
-    return appsecret ;
+async function GenerateSharedKey(useremail) {
+    //Is unsafe to store it in enviroment variable
+    const key = process.env.MASTER_KEY;
+    const algorithm = 'sha512';
+    const text =await GetUserID(useremail);
+    const hmac = crypto.createHmac(algorithm, key).update(text).digest('hex');
+    User.update( { shared_key: hmac },
+        { where: { email: useremail } });
+    return hmac;
 }
 
 module.exports = GenerateSharedKey;
+

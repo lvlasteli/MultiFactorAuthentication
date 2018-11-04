@@ -20,7 +20,16 @@ const User = database.define('user', {
         type: Sequelize.STRING,
         required: true
     },
-    twofactorauth: Sequelize.BOOLEAN
+    twofactorauth: {
+        type: Sequelize.BOOLEAN,
+        defaultValue:false
+
+    },
+    shared_key: {
+        type: Sequelize.STRING,
+        allowNull:true,
+    }
+
     
 });
 

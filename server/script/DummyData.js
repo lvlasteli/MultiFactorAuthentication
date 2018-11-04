@@ -28,7 +28,6 @@ Promise.all([
             username: 'mgekic',
             email: 'mgekic00@fesb.hr',
             password: pass2,
-            twofactorauth: 'false'
         })
     ])
     .then(() => database.close())

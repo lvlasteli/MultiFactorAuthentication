@@ -31,7 +31,6 @@ router.post('/signup', (req, res) => {
                         username: req.body.username,
                         email: req.body.email,
                         password: hash,
-                        twofactorauth: false
                     }).then((result)=> {
                         console.log(result);
                         res.status(201).json({
@@ -90,7 +89,12 @@ router.post('/qrcode', checkAuth, (req, res) => {
         if(twofa === true)
         {
             const qr = QRCode(userEmail);
-            return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: qr });
+            qr.then((result) => {
+                return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result });
+            }).catch((err) => {
+                console.log(err);
+                res.status(500).json({error: err});
+            });
         }
         else
         {
