@@ -2,9 +2,14 @@
 <v-form ref="form">
     <v-container>
       <h1> Login </h1>
-      <p> {{ userMessage }} </p>
-        <v-flex xs12 sm6 offset-sm3>
+      <v-flex xs12 sm6 offset-sm3>
+        <v-alert :color="color"
+        :value="alert"
+        :type="type">
+        {{ userMessage }}
+        </v-alert>
             <v-text-field
+            name="email"
             v-model="email"
             label="Email"
             required>
@@ -13,7 +18,7 @@
                 v-model="password"
                 :append-icon="show1 ? 'visibility_off' : 'visibility'"
                 :type="show1 ? 'text' : 'password'"
-                name="input-10-1"
+                name="password"
                 label="Password"
                 @click:append="show1 = !show1">
             </v-text-field>
@@ -32,6 +37,9 @@ export default {
   name: 'login',
   data() {
     return {
+        alert:false,
+        color:'',
+        type: 'info',
         userMessage:'',
         show1: false,
         email: '',
@@ -46,22 +54,28 @@ export default {
           };
           const message=LoginUser(data);
           message.then((result) => {
-            if(result==='Authorization successful')
+            if(result.message==='Authorization successful')
             {
-              this.userMessage = result;
-              // const token=localStorage.getItem('token');
-              //needed code to check if user has enabled 2FA
-              //when response is returned redirect him to qrcode page
+              this.alert = true;
+              this.color = "green";
+              this.type = "success";
+              this.userMessage = result.message+', Welcome '+result.username;
+              //email for now
+              this.$store.state.Username = result.username;
               setTimeout(()=> {
                 this.$router.replace({ name: 'qrcode' });
                 }, 1500);
             }
             else{
+              this.alert = true;
+              this.color = "red";
+              this.type = "error";
               this.userMessage = 'Authorization Failed';
             }
           });
       },
       clear () {
+        this.alert = false;
         this.userMessage = '';
         this.$refs.form.reset();
       }

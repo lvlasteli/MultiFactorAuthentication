@@ -54,6 +54,7 @@ router.post('/login', (req, res) => {
             //bad for brute force attack to return message user doesnt exist
             return res.status(401).json({ message: 'Authorization failed'});
         }
+        const username = user.username;
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if(err) {
                 return res.status(401).json({ message: 'Authorization failed'});
@@ -69,7 +70,8 @@ router.post('/login', (req, res) => {
                 });
                 return res.status(200).json({ 
                     message: 'Authorization successful',
-                    token: token
+                    token: token,
+                    username: username
                 });
             }
             return res.status(401).json({

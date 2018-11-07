@@ -22,8 +22,7 @@ export default {
             QRCode: ''
         }
     },
-    created: function()
-    {
+    created: function() {
         const res = GetQrCode();
         res.then((response) => {
             console.log(response);

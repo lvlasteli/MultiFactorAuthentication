@@ -9,7 +9,7 @@ export function LoginUser(data){
        const token = response.data.token;
        localStorage.setItem('token', token);
        localStorage.setItem('useremail', data.email);
-       return response.data.message;
+       return response.data;
      }).catch(err => {
         return err.message;
      });
