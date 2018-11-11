@@ -60,7 +60,6 @@ export default {
               this.color = "green";
               this.type = "success";
               this.userMessage = result.message+', Welcome '+result.username;
-              //email for now
               this.$store.state.Username = result.username;
               setTimeout(()=> {
                 this.$router.replace({ name: 'qrcode' });

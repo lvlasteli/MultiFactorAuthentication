@@ -34,3 +34,13 @@ export function GetQrCode(data) {
      return err.message;
   });
 }
+
+export function Enable2FA(data) {
+  const token = localStorage.getItem('token');
+  const useremail= localStorage.getItem('useremail');
+  const authHeader = {'Authorization': `${useremail} ${token}`};
+  return axios.put(process.env.VUE_APP_API_ENABLE2FA, data, { headers: authHeader }
+  ).then((response) => {
+    return response;
+  });
+}
