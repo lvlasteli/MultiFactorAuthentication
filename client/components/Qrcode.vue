@@ -14,8 +14,10 @@
                     </v-btn>
                 </v-card>
                 <v-card v-else>
+                    <br>
                     <qrcode-vue :value="this.qrCode" size="200" level="M"></qrcode-vue>
-                    <v-flex xs6 offset-xs3>
+                    <br>
+                    <v-flex xs8 offset-xs2>
                         <v-text-field label="Enter The Code" box clearable></v-text-field>
                     </v-flex>
                     <v-btn outline round  color="green" small dark>
@@ -54,7 +56,6 @@ export default {
                 this.message = response.enabled;
                 if ( response.enabled === true ) {
                     this.qrCode =  response.qrcode;
-                    this.UpdateCanvas();
                 }
         });
         }   
@@ -68,17 +69,10 @@ export default {
                 this.message = response.data.enabled;
                 this.qrCode = response.data.qrcode
                 console.log("QR: "+ this.qrCode);
-                if ( this.message === true ) {
-                    this.UpdateCanvas();
-                }
             });
         },
         Continue() {
             //get to user profile without 2FA
-        },
-        UpdateCanvas() {
-            //QRCode.toCanvas(document.getElementById('canvas'), this.qrCode);
-
         }
     }
 }
