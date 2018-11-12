@@ -45,6 +45,7 @@ router.post('/signup', (req, res) => {
         }
     });
 });
+
 router.post('/login', (req, res) => {
     User.findOne({
         where: { email: req.body.email }
@@ -83,6 +84,7 @@ router.post('/login', (req, res) => {
         res.status(500).json({error: err});
     });
 });
+
 router.post('/qrcode', checkAuth, (req, res) => {
     const userEmail = req.headers.authorization.split(" ")[0];
     User.findOne({ where: { email: userEmail } })
@@ -90,19 +92,46 @@ router.post('/qrcode', checkAuth, (req, res) => {
         const twofa = result.twofactorauth;
         if(twofa === true)
         {
-            const qr = QRCode(userEmail);
-            qr.then((result) => {
-                return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result });
-            }).catch((err) => {
-                console.log(err);
-                res.status(500).json({error: err});
-            });
+            if(result.shared_key === null) {
+                const qr = QRCode(userEmail);
+                qr.then((result) => {
+                    return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result });
+                }).catch((err) => {
+                    console.log(err);
+                    res.status(500).json({error: err});
+                });
+            }
+            else {
+                return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result.shared_key });
+            }
+            
         }
         else
         {
             return res.status(200).json({ message: "Token confirmed but 2FA is not required" , enabled: twofa });            
         }
     });
-})
+});
+
+router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
+    const userEmail = req.headers.authorization.split(" ")[0];
+    User.update(
+        { twofactorauth : req.body.enabled },
+        { where: { email: userEmail }}
+    ).then(() => {
+        if(req.body.enabled === true ) {
+            const qr = QRCode(userEmail);
+                qr.then((result) => {
+                    return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: req.body.enabled , qrcode: result });
+                });
+        }
+        else {
+            //code for disabling 2FA
+            return res.status(200).json({ message: "2FA changed!" });
+        }
+    }).catch(() => {
+        return res.status(401).json({ message: 'Authorization failed'});
+    });
+});
 
 module.exports = router;

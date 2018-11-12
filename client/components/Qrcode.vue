@@ -1,12 +1,12 @@
 <template>
     <v-form>
         <v-container>
-            <v-flex xs12 sm4 offset-sm4>
+            <v-flex xs12 sm6 offset-sm3>
                 <h2>Two Factor Authentication</h2>
                 <p> Enabled: {{ message }} </p>
                 <v-card v-if="message === false">
                     Do you wanna enable it?
-                    <v-btn outline round  color="green" small dark>
+                    <v-btn outline round  color="green" @click="EnableIt()" small dark>
                         <v-icon>check_circle</v-icon> Yes
                     </v-btn>
                     <v-btn outline round color="red" small dark>
@@ -39,7 +39,7 @@ export default {
     data() {
         return {
             message:'',
-            QRCode: ''
+            qrCode: ''
         }
     },
     created: function() {
@@ -48,21 +48,34 @@ export default {
         } else {
             const res = GetQrCode();
             res.then((response) => {
-                console.log(response);
                 this.message = response.enabled;
                 if ( response.enabled === true ) {
-                    QRCode.toCanvas(document.getElementById('canvas'), response.qrcode);
+                    this.qrCode =  response.qrcode;
+                    this.UpdateCanvas();
                 }
         });
         }   
     },
     methods: {
         EnableIt() {
-            const data = true;
-            Enable2FA(data);
+            const data = { enabled: true };
+            const res = Enable2FA(data);
+            res.then((response) => {
+                console.log(response.data);
+                console.log("Dio: "+response.data.enabled);
+                this.message = response.data.enabled;
+                this.qrCode = response.data.qrcode
+                console.log("QR: "+ this.qrCode);
+                if ( this.message === true ) {
+                    this.UpdateCanvas();
+                }
+            });
         },
         Continue() {
-
+            //get to user profile without 2FA
+        },
+        UpdateCanvas() {
+            QRCode.toCanvas(document.getElementById('canvas'), this.qrCode);
         }
     }
 }
