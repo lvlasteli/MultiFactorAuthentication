@@ -14,7 +14,7 @@
                     </v-btn>
                 </v-card>
                 <v-card v-else>
-                    <canvas id="canvas"></canvas>
+                    <qrcode-vue :value="this.qrCode" size="200" level="M"></qrcode-vue>
                     <v-flex xs6 offset-xs3>
                         <v-text-field label="Enter The Code" box clearable></v-text-field>
                     </v-flex>
@@ -32,7 +32,7 @@
 
 <script>
 import { GetQrCode, Enable2FA } from '../api/user.js';
-import QRCode from 'qrcode';
+import QrcodeVue from 'qrcode.vue';
 
 export default {
     name: 'qrcode',
@@ -41,6 +41,9 @@ export default {
             message:'',
             qrCode: ''
         }
+    },
+    components: {
+        QrcodeVue
     },
     created: function() {
         if (this.$store.state.Username === null) {
@@ -62,7 +65,6 @@ export default {
             const res = Enable2FA(data);
             res.then((response) => {
                 console.log(response.data);
-                console.log("Dio: "+response.data.enabled);
                 this.message = response.data.enabled;
                 this.qrCode = response.data.qrcode
                 console.log("QR: "+ this.qrCode);
@@ -75,7 +77,8 @@ export default {
             //get to user profile without 2FA
         },
         UpdateCanvas() {
-            QRCode.toCanvas(document.getElementById('canvas'), this.qrCode);
+            //QRCode.toCanvas(document.getElementById('canvas'), this.qrCode);
+
         }
     }
 }
