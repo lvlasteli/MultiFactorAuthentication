@@ -18,12 +18,12 @@
                     <qrcode-vue :value="this.qrCode" size="200" level="M"></qrcode-vue>
                     <br>
                     <v-flex xs8 offset-xs2>
-                        <v-text-field label="Enter The Code" box clearable></v-text-field>
+                        <v-text-field v-model="code" label="Enter The Code" box clearable></v-text-field>
                     </v-flex>
-                    <v-btn outline round  color="green" small dark>
+                    <v-btn outline round  color="green" @click="Validate()" dark>
                         <v-icon>check_circle</v-icon>
                     </v-btn>
-                    <v-btn outline round color="red" small dark>
+                    <v-btn outline round color="red" dark>
                         <v-icon>remove_circle</v-icon>
                     </v-btn>
                 </v-card>
@@ -41,7 +41,8 @@ export default {
     data() {
         return {
             message:'',
-            qrCode: ''
+            qrCode: '',
+            code: ''
         }
     },
     components: {
@@ -70,6 +71,10 @@ export default {
                 this.qrCode = response.data.qrcode
                 console.log("QR: "+ this.qrCode);
             });
+        },
+        Validate() {
+            //const code = this.code;
+            
         },
         Continue() {
             //get to user profile without 2FA
