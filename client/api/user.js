@@ -44,3 +44,13 @@ export function Enable2FA(data) {
     return response;
   });
 }
+
+export function ValidateCode(data) {
+  const token = localStorage.getItem('token');
+  const useremail= localStorage.getItem('useremail');
+  const authHeader = {'Authorization': `${useremail} ${token}`};
+  return axios.post(process.env.VUE_APP_API_VALIDATE, data, { headers: authHeader }
+  ).then((response) => {
+    return response.data;
+  });
+}

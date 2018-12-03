@@ -8,6 +8,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
 const QRCode = require('../script/GenerateSharedSecret');
+const TwoFactor=require('../script/TwoFactorAuth');
 
 require('dotenv').config();
 
@@ -19,8 +20,7 @@ router.post('/signup', (req, res) => {
         // check if user exists in database
         if(user!== null) {
             return res.status(409).json({message: 'User already exists'});
-        }
-        else {
+        } else {
              //hasing password with 10 random strings
              bcrypt.hash(req.body.password, 10, (err, hash) => {
                 if(err) {
@@ -100,17 +100,25 @@ router.post('/qrcode', checkAuth, (req, res) => {
                     console.log(err);
                     res.status(500).json({error: err});
                 });
-            }
-            else {
+            } else {
                 return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result.shared_key });
             }
             
-        }
-        else
-        {
+        } else {
             return res.status(200).json({ message: "Token confirmed but 2FA is not required" , enabled: twofa });            
         }
     });
+});
+
+router.post('/qrcode/validate', checkAuth, (req, res) => {
+    console.log(req.body);
+    const reply = TwoFactor(req.body.qrcode, req.body.code);
+    //if reply is 1 (true)
+    if(reply) {
+        return res.status(200).json({ message: "Code valid!", result: true });
+    } else {
+        return res.status(200).json({ message: "Code invalid!", result: false });
+    }
 });
 
 router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
@@ -124,8 +132,7 @@ router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
                 qr.then((result) => {
                     return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: req.body.enabled , qrcode: result });
                 });
-        }
-        else {
+        } else {
             //code for disabling 2FA
             return res.status(200).json({ message: "2FA changed!" });
         }
