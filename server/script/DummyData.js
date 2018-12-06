@@ -1,7 +1,7 @@
 const User = require('../user/user.model');
 const database = require('../databaseconnection');
 const Sequelize = require('sequelize');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 
 let pass1="";
 let pass2 ="";

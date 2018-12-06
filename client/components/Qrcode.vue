@@ -71,7 +71,7 @@ export default {
                     this.qrCode =  response.qrcode;
                 }
         });
-        // add a code that check if user has failed 2fa too many times
+        // add a code that checks if user has failed 2fa too many times
         }   
     },
     methods: {
@@ -93,7 +93,6 @@ export default {
                 const reply = this.CheckTries();
                 if(reply.isAllowed) {
                     this.$store.state.SecondAuthentiactionTries++;
-                    //Validate the code
                     const res = ValidateCode(data);
                     res.then((response) => {
                             if(response.result) {
