@@ -50,7 +50,7 @@ export default {
             qrCode: '',
             code: '',
             disabledBtn: false,
-            allowedTries: 4,
+            allowedTries: 3,
             authMessage: '',
             alert: false,
             color: '',
@@ -83,16 +83,38 @@ export default {
                 this.qrCode = response.data.qrcode;
             });
         },
+        Continue() {
+            //get to user profile without 2FA
+        },
+        CheckTries() {
+            const tries = this.$store.state.SecondAuthentiactionTries;
+            const numbOfTries = (this.allowedTries - tries);
+            if ( numbOfTries > 0)
+            {
+                const data = {
+                    isAllowed: true,
+                    message: (numbOfTries)+' attempts remaining'
+                }
+                return data;
+            } else {
+                const data = {
+                    isAllowed: false,
+                    message: 'Too many attempts, wait 1 minute',
+                    timeStamp: Math.floor(Date.now() /1000)
+                }
+                return data;
+            }
+        },
         Validate() {
+            this.$store.state.SecondAuthentiactionTries++;
             const data = {
                 qrcode: this.qrCode,
                 code: this.code
             }
             if (this.code) {
                 this.alert=false;
-                const reply = this.CheckTries();
-                if(reply.isAllowed) {
-                    this.$store.state.SecondAuthentiactionTries++;
+                if(this.$store.state.SecondAuthentiactionTries<=3) {
+                    const reply2=this.CheckTries();
                     const res = ValidateCode(data);
                     res.then((response) => {
                             if(response.result) {
@@ -100,20 +122,32 @@ export default {
                                 this.ShowSuccess();
                                 //redirect to UserPage
                             } else {
-                                this.ShowError(reply.message);
+                                this.ShowError(reply2.message);
+                                if(reply2.isAllowed===false) {
+                                    this.DisableTheInput();
+                                }
                             }
                         });
                 } else {
-                    this.ShowError(reply.message);
+                    this.ShowError('Too many attempts, wait 1 minute');
                     //disable input button and show timer of 1 minute
+                    this.DisableTheInput();
                     // add v-progress-circular
-                    //this.disabledBtn = true;
+                    
                 }
             } else {
                 const errmessage = 'Enter Valid Code.';
                 this.ShowError(errmessage);
-                
             }
+        },
+        DisableTheInput(){
+            this.disabledBtn = true;
+            setTimeout(() => {
+                this.$store.state.SecondAuthentiactionTries=2;
+                const replay=this.CheckTries();
+                this.ShowError(replay.message);
+                this.disabledBtn = false;
+            }, 60000);
         },
         ShowError(message) {
             this.alert = true;
@@ -131,34 +165,9 @@ export default {
         Dec() {
             //method currently works to decrement user tries
             this.$store.state.SecondAuthentiactionTries--;
-            console.log(this.$store.state.SecondAuthentiactionTries);
-        },
-        Continue() {
-            //get to user profile without 2FA
-        },
-        CheckTries() {
-            
-            const tries = this.$store.state.SecondAuthentiactionTries;
-            const numbOfTries = this.allowedTries - tries;
-            if ( numbOfTries > 0)
-            {
-                const data = {
-                    isAllowed: true,
-                    numbOfTries: numbOfTries,
-                    message: (numbOfTries-1)+' attempts remaining'
-                }
-                return data;
-
-            } else {
-                const data = {
-                    isAllowed: false,
-                    numbOfTries: numbOfTries,
-                    message: 'Too many attempts, wait 1 minute',
-                    timeStamp: Math.floor(Date.now() /1000)
-
-                }
-                return data;
-            }
+            const reply=this.CheckTries();
+            this.ShowError(reply.message);
+            this.disabledBtn=false;
         }
     }
 }
