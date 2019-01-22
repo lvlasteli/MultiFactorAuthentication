@@ -31,19 +31,19 @@ app.use((req, res, next) => {
     const error = new Error("Not found");
     error.status = 404;
     next(error);
-  });
+});
   
-  app.use((error, req, res) => {
-    res.status(error.status || 500);
-    res.json({
-      error: {
-        message: error.message
-      }
-    });
+app.use((error, req, res) => {
+  res.status(error.status || 500);
+  res.json({
+    error: {
+      message: error.message
+    }
   });
+});
   
-  app.listen(8000, () => {
+app.listen(8000, () => {
     const host = process.env.POSTGRES_HOST;
     const port = process.env.SERVER_PORT;
     console.log('App listening at http://%s:%s', host, port);
-  });
+});

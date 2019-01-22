@@ -111,7 +111,6 @@ router.post('/qrcode', checkAuth, (req, res) => {
 });
 
 router.post('/qrcode/validate', checkAuth, (req, res) => {
-    console.log(req.body);
     const reply = TwoFactor(req.body.qrcode, req.body.code);
     //if reply is 1 (true)
     if(reply) {
