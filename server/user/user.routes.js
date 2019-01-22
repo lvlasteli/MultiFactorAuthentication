@@ -7,6 +7,7 @@ const User = require('./user.model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const checkAuth = require('../middleware/check-auth');
+const checkTries = require('../middleware/api-limiter');
 const QRCode = require('../script/GenerateSharedSecret');
 const TwoFactor=require('../script/TwoFactorAuth');
 
@@ -46,19 +47,20 @@ router.post('/signup', (req, res) => {
     });
 });
 
-router.post('/login', (req, res) => {
+
+router.post('/login', checkTries, (req, res) => {
     User.findOne({
         where: { email: req.body.email }
     })
     .then((user) => {
         if(user === null) {
             //bad for brute force attack to return message user doesnt exist
-            return res.status(401).json({ message: 'Authorization failed'});
+            return res.status(200).json({ message: 'Authorization failed'});
         }
         const username = user.username;
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if(err) {
-                return res.status(401).json({ message: 'Authorization failed'});
+                return res.status(200).json({ message: 'Authorization failed'});
             }
             if (result) {
                 //creation of token
@@ -75,8 +77,7 @@ router.post('/login', (req, res) => {
                     username: username
                 });
             }
-            return res.status(401).json({
-                message: 'Authorization failed'});
+            return res.status(200).json({ message: 'Authorization failed'});
         })
     })
     .catch((err) => {
@@ -110,7 +111,7 @@ router.post('/qrcode', checkAuth, (req, res) => {
     });
 });
 
-router.post('/qrcode/validate', checkAuth, (req, res) => {
+router.post('/qrcode/validate',checkTries, checkAuth, (req, res) => {
     const reply = TwoFactor(req.body.qrcode, req.body.code);
     //if reply is 1 (true)
     if(reply) {

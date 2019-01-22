@@ -22,7 +22,7 @@
                 label="Password"
                 @click:append="show1 = !show1">
             </v-text-field>
-            <v-btn @click="submit">submit</v-btn>
+            <v-btn :disabled="disabledBtn" @click="submit">submit</v-btn>
             <v-btn @click="clear">clear</v-btn>
         </v-flex>
     </v-container>
@@ -41,6 +41,7 @@ export default {
         color:'',
         type: 'info',
         userMessage:'',
+        disabledBtn: false,
         show1: false,
         email: '',
         password: ''
@@ -69,7 +70,15 @@ export default {
               this.alert = true;
               this.color = "red";
               this.type = "error";
-              this.userMessage = 'Authorization Failed';
+              this.userMessage = result.message;
+              if(result.message==='Failed too many times, wait 1 minute') {
+                this.disabledBtn = true;
+                setTimeout(() => {
+                this.alert = false;
+                this.disabledBtn = false;
+                }, 60000);
+              }
+              
             }
           });
       },

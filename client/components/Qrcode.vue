@@ -25,10 +25,10 @@
                         <v-text-field v-model="code" label="Enter The Code" box clearable></v-text-field>
                     </v-flex>
                     <v-btn outline round :disabled="disabledBtn" color="green" @click="Validate()" dark>
-                        <v-icon>check_circle</v-icon>
+                        <v-icon>check_circle</v-icon> Insert
                     </v-btn>
                     <v-btn outline round color="red" @click="Dec()" dark>
-                        <v-icon>remove_circle</v-icon>
+                        <v-icon>remove_circle</v-icon> Reset
                     </v-btn>
                     <br>
                     <br>
@@ -50,7 +50,6 @@ export default {
             qrCode: '',
             code: '',
             disabledBtn: false,
-            allowedTries: 3,
             authMessage: '',
             alert: false,
             color: '',
@@ -86,66 +85,29 @@ export default {
         Continue() {
             //get to user profile without 2FA
         },
-        CheckTries() {
-            const tries = this.$store.state.SecondAuthentiactionTries;
-            const numbOfTries = (this.allowedTries - tries);
-            if ( numbOfTries > 0)
-            {
-                const data = {
-                    isAllowed: true,
-                    message: (numbOfTries)+' attempts remaining'
-                }
-                return data;
-            } else {
-                const data = {
-                    isAllowed: false,
-                    message: 'Too many attempts, wait 1 minute',
-                    timeStamp: Math.floor(Date.now() /1000)
-                }
-                return data;
-            }
-        },
         Validate() {
-            this.$store.state.SecondAuthentiactionTries++;
             const data = {
-                qrcode: this.qrCode,
+                qrcode: this.qrcode,
                 code: this.code
             }
-            if (this.code) {
-                this.alert=false;
-                if(this.$store.state.SecondAuthentiactionTries<=3) {
-                    const reply2=this.CheckTries();
-                    const res = ValidateCode(data);
-                    res.then((response) => {
-                            if(response.result) {
-                                this.$store.state.SecondAuthentiactionTries--;
-                                this.ShowSuccess();
-                                //redirect to UserPage
-                            } else {
-                                this.ShowError(reply2.message);
-                                if(reply2.isAllowed===false) {
-                                    this.DisableTheInput();
-                                }
-                            }
-                        });
+            const res = ValidateCode(data);
+            res.then((response) => {
+                if(response.result) {
+                    this.ShowSuccess();
+                    //redirect to UserPage
                 } else {
-                    this.ShowError('Too many attempts, wait 1 minute');
-                    //disable input button and show timer of 1 minute
-                    this.DisableTheInput();
-                    // add v-progress-circular
-                    
+                    this.ShowError(response.message);
+                    if(response.message === 'Failed too many times, wait 1 minute') {
+                        this.DisableTheInput();
+                    }
                 }
-            } else {
-                const errmessage = 'Enter Valid Code.';
-                this.ShowError(errmessage);
-            }
+            });   
+
         },
         DisableTheInput(){
             this.disabledBtn = true;
             setTimeout(() => {
-                this.$store.state.SecondAuthentiactionTries=2;
-                const replay=this.CheckTries();
-                this.ShowError(replay.message);
+                this.ShowError('Insert valid code');
                 this.disabledBtn = false;
             }, 60000);
         },
@@ -163,11 +125,6 @@ export default {
             this.type='success';
         },
         Dec() {
-            //method currently works to decrement user tries
-            this.$store.state.SecondAuthentiactionTries--;
-            const reply=this.CheckTries();
-            this.ShowError(reply.message);
-            this.disabledBtn=false;
         }
     }
 }
