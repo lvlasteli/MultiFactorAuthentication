@@ -49,7 +49,6 @@ export function ValidateCode(data) {
   const token = localStorage.getItem('token');
   const useremail= localStorage.getItem('useremail');
   const authHeader = {'Authorization': `${useremail} ${token}`};
-  console.log(process.env.VUE_APP_API_VALIDATE);
   return axios.post(process.env.VUE_APP_API_VALIDATE, data, { headers: authHeader }
   ).then((response) => {
     return response.data;
@@ -59,12 +58,8 @@ export function ValidateCode(data) {
 export function ConfirmAuth(data) {
   const token = localStorage.getItem('token');
   const useremail= localStorage.getItem('useremail');
-  console.log(process.env.VUE_APP_API_SUCCESS_URL);
   const authHeader = {'Authorization': `${useremail} ${token}`};
-  return axios.put(process.env.VUE_APP_API_SUCCESS, data, { headers: authHeader }
-    ).then((response) => {
-    return response;
-   });
+  return axios.put(process.env.VUE_APP_API_SUCCESS, data, { headers: authHeader });
 }
 
 
@@ -72,7 +67,6 @@ export function ResetQRCode(data) {
   const token = localStorage.getItem('token');
   const useremail= localStorage.getItem('useremail');
   const authHeader = {'Authorization': `${useremail} ${token}`};
-  console.log(process.env);
   return axios.put(process.env.RESETQRCODE_URL, data, { headers: authHeader }
     ).then((response) => {
       return response;

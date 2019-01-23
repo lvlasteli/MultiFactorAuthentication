@@ -11,8 +11,7 @@
 </template>
 
 <script>
-import { ConfirmAuth, ResetQRCode } from '../api/user.js';
-require('dotenv').config();
+import { ConfirmAuth } from '../api/user.js';
 
 export default {
     name: 'userprofile',
@@ -26,7 +25,6 @@ export default {
             bool: true
         }
         ConfirmAuth(data);
-        ResetQRCode(data);
     }
 }
 </script>

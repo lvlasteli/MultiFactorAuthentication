@@ -120,14 +120,12 @@ router.post('/qrcode/validate',checkTries ,checkAuth, (req, res) => {
         return res.status(200).json({ message: "Code invalid!", result: false });
     }
 });
-router.put('/success', checkAuth, (req, res) => {
+router.put('/success', checkAuth, (req) => {
     const userEmail = req.headers.authorization.split(" ")[0];
     User.update(
         { successful_auth: req.body.bool },
         { where: { email: userEmail }}
-    ).then(() => {
-        return res.status(200).json({ message: "Done" });
-    });
+    );
 });
 
 router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
