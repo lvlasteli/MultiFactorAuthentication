@@ -128,6 +128,7 @@ router.put('/success', checkAuth, (req) => {
     );
 });
 
+
 router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
     const userEmail = req.headers.authorization.split(" ")[0];
     User.update(
@@ -155,23 +156,27 @@ router.put('/qrcode/reset', checkAuth, (req, res) => {
     })
     .then((user) => {
         if(user === null) {
+            console.log('tu');
             return res.status(200).json({ message: 'Denied'});
         }
         bcrypt.compare(req.body.password, user.password, (err, result) => {
             if(err) {
+                console.log('tu2');
                 return res.status(200).json({ message: 'Denied'});
             }
             if(result) {
                 const qr = QRCode(userEmail);
-                qr.then(() => {
+                qr.then((result) => {
+                    console.log(result);
                     User.update(
-                        { shared_key: qr },
+                        { shared_key: result },
                         { where: { email: userEmail }}
                     ).then(() => {
                         return res.status(200).json({ message: 'Approved' });
                     });
                 });
             } else {
+                console.log('tu3');
                 return res.status(200).json({ message: 'Denied'});
             }
         });
