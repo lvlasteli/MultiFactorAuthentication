@@ -32,8 +32,7 @@ router.post('/signup', (req, res) => {
                         username: req.body.username,
                         email: req.body.email,
                         password: hash,
-                    }).then((result)=> {
-                        console.log(result);
+                    }).then(()=> {
                         res.status(201).json({
                             message: 'User Created'
                         });
@@ -111,14 +110,24 @@ router.post('/qrcode', checkAuth, (req, res) => {
     });
 });
 
-router.post('/qrcode/validate',checkTries, checkAuth, (req, res) => {
+router.post('/qrcode/validate',checkTries ,checkAuth, (req, res) => {
     const reply = TwoFactor(req.body.qrcode, req.body.code);
+    //const reply = TwoFactor(req.body.code);
     //if reply is 1 (true)
     if(reply) {
         return res.status(200).json({ message: "Code valid!", result: true });
     } else {
         return res.status(200).json({ message: "Code invalid!", result: false });
     }
+});
+router.put('/success', checkAuth, (req, res) => {
+    const userEmail = req.headers.authorization.split(" ")[0];
+    User.update(
+        { successful_auth: req.body.bool },
+        { where: { email: userEmail }}
+    ).then(() => {
+        return res.status(200).json({ message: "Done" });
+    });
 });
 
 router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
@@ -138,6 +147,36 @@ router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
         }
     }).catch(() => {
         return res.status(401).json({ message: 'Authorization failed'});
+    });
+});
+
+router.put('/qrcode/reset', checkAuth, (req, res) => {
+    const userEmail = req.headers.authorization.split(" ")[0];
+    User.findOne({
+        where: { email: userEmail }
+    })
+    .then((user) => {
+        if(user === null) {
+            return res.status(200).json({ message: 'Denied'});
+        }
+        bcrypt.compare(req.body.password, user.password, (err, result) => {
+            if(err) {
+                return res.status(200).json({ message: 'Denied'});
+            }
+            if(result) {
+                const qr = QRCode(userEmail);
+                qr.then(() => {
+                    User.update(
+                        { shared_key: qr },
+                        { where: { email: userEmail }}
+                    ).then(() => {
+                        return res.status(200).json({ message: 'Approved' });
+                    });
+                });
+            } else {
+                return res.status(200).json({ message: 'Denied'});
+            }
+        });
     });
 });
 

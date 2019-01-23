@@ -18,7 +18,8 @@ async function GenerateSharedKey(useremail) {
     //Is unsafe to store it in enviroment variable
     const key = process.env.MASTER_KEY;
     const algorithm = 'sha512';
-    const text =await GetUserID(useremail);
+    let text = await GetUserID(useremail);
+    text = text + Date.now();
     const hmac = crypto.createHmac(algorithm, key).update(text).digest('hex');
     User.update( { shared_key: hmac },
         { where: { email: useremail } });

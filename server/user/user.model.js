@@ -28,9 +28,11 @@ const User = database.define('user', {
     shared_key: {
         type: Sequelize.STRING,
         allowNull:true,
+    },
+    successful_auth: {
+        type: Sequelize.BOOLEAN,
+        defaultValue:false
     }
-
-    
 });
 
 module.exports = User;

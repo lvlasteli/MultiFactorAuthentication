@@ -69,8 +69,7 @@ export default {
                 if ( response.enabled === true ) {
                     this.qrCode =  response.qrcode;
                 }
-        });
-        // add a code that checks if user has failed 2fa too many times
+            });
         }   
     },
     methods: {
@@ -87,14 +86,17 @@ export default {
         },
         Validate() {
             const data = {
-                qrcode: this.qrcode,
+                qrcode: this.qrCode,
                 code: this.code
             }
             const res = ValidateCode(data);
             res.then((response) => {
                 if(response.result) {
                     this.ShowSuccess();
+                    setTimeout(()=> {
                     //redirect to UserPage
+                    this.$router.replace({ name: 'userprofile' });
+                    }, 1500);
                 } else {
                     this.ShowError(response.message);
                     if(response.message === 'Failed too many times, wait 1 minute') {
