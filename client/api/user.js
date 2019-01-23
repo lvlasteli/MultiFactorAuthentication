@@ -67,8 +67,8 @@ export function ResetQRCode(data) {
   const token = localStorage.getItem('token');
   const useremail= localStorage.getItem('useremail');
   const authHeader = {'Authorization': `${useremail} ${token}`};
-  return axios.put(process.env.RESETQRCODE_URL, data, { headers: authHeader }
+  return axios.put(process.env.VUE_APP_API_RESETQRCODE_URL, data, { headers: authHeader }
     ).then((response) => {
-      return response;
+      return response.data;
     });
 }

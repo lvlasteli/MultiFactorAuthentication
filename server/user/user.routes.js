@@ -80,7 +80,6 @@ router.post('/login', checkTries, (req, res) => {
         })
     })
     .catch((err) => {
-        console.log(err);
         res.status(500).json({error: err});
     });
 });
@@ -90,6 +89,7 @@ router.post('/qrcode', checkAuth, (req, res) => {
     User.findOne({ where: { email: userEmail } })
     .then((result) => {
         const twofa = result.twofactorauth;
+        const usersuccess = result.successful_auth;
         if(twofa === true)
         {
             if(result.shared_key === null) {
@@ -97,11 +97,14 @@ router.post('/qrcode', checkAuth, (req, res) => {
                 qr.then((result) => {
                     return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result });
                 }).catch((err) => {
-                    console.log(err);
                     res.status(500).json({error: err});
                 });
             } else {
-                return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result.shared_key });
+                if (usersuccess) {
+                    return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: null });
+                } else {
+                    return res.status(200).json({ message: "Token confirmed and your QrCode is" , enabled: twofa , qrcode: result.shared_key });
+                }
             }
             
         } else {
@@ -111,14 +114,18 @@ router.post('/qrcode', checkAuth, (req, res) => {
 });
 
 router.post('/qrcode/validate',checkTries ,checkAuth, (req, res) => {
-    const reply = TwoFactor(req.body.qrcode, req.body.code);
-    //const reply = TwoFactor(req.body.code);
-    //if reply is 1 (true)
-    if(reply) {
-        return res.status(200).json({ message: "Code valid!", result: true });
-    } else {
-        return res.status(200).json({ message: "Code invalid!", result: false });
-    }
+    const userEmail = req.headers.authorization.split(" ")[0];
+    return User.findOne({
+        where: { email: userEmail }
+    }).then((user) => {
+        const reply = TwoFactor(user.shared_key, req.body.code);
+        if(reply) {
+            return res.status(200).json({ message: "Code valid!", result: true });
+        } else {
+            return res.status(200).json({ message: "Code invalid!", result: false });
+        }
+    })
+    
 });
 router.put('/success', checkAuth, (req) => {
     const userEmail = req.headers.authorization.split(" ")[0];
@@ -145,42 +152,47 @@ router.put('/qrcode/enabledisable', checkAuth, (req, res) => {
             return res.status(200).json({ message: "2FA changed!" });
         }
     }).catch(() => {
-        return res.status(401).json({ message: 'Authorization failed'});
+        return res.status(200).json({ message: 'Authorization failed'});
     });
 });
 
 router.put('/qrcode/reset', checkAuth, (req, res) => {
     const userEmail = req.headers.authorization.split(" ")[0];
-    User.findOne({
-        where: { email: userEmail }
-    })
-    .then((user) => {
-        if(user === null) {
-            console.log('tu');
-            return res.status(200).json({ message: 'Denied'});
-        }
-        bcrypt.compare(req.body.password, user.password, (err, result) => {
-            if(err) {
-                console.log('tu2');
-                return res.status(200).json({ message: 'Denied'});
+    if(userEmail === req.body.email  ) {
+        User.findOne({
+            where: { email: req.body.email }
+        })
+        .then((user) => {
+            if(user === null) {
+                return res.status(200).json({ message: 'Denied', status: false});
             }
-            if(result) {
-                const qr = QRCode(userEmail);
-                qr.then((result) => {
-                    console.log(result);
-                    User.update(
-                        { shared_key: result },
-                        { where: { email: userEmail }}
-                    ).then(() => {
-                        return res.status(200).json({ message: 'Approved' });
+            console.log(req.body);
+            bcrypt.compare(req.body.password, user.password, (err, result) => {
+                if(err) {
+                    return res.status(200).json({ message: 'Denied', status: false});
+                }
+                if(result) {
+                    const qr = QRCode(userEmail);
+                    qr.then((result) => {
+                        console.log("rezultat:    "+result);
+                        return User.update(
+                            { shared_key: result,
+                                successful_auth: false
+                            },
+                            { where: { email: req.body.email }}
+                        ).then(() => {
+                            return res.status(200).json({ message: 'Approved', status: true });
+                        });
                     });
-                });
-            } else {
-                console.log('tu3');
-                return res.status(200).json({ message: 'Denied'});
-            }
+                } else {
+                    return res.status(200).json({ message: 'Denied', status: false});
+                }
+            });
         });
-    });
+    }
+    else {
+        return res.status(200).json({ message: 'Denied4', status: false});
+    }
 });
 
 module.exports = router;
