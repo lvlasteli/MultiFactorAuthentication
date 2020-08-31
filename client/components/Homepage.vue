@@ -3,17 +3,13 @@
     <h3>Homepage</h3>
     <img alt="Vue logo" src="../assets/logo.png">
     <p>Two Factor Authentication</p>
-    
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'home',
-  props: {
-    msg: String
-  }
+  name: 'home'
 }
 </script>
 

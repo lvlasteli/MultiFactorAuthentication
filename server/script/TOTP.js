@@ -1,10 +1,11 @@
 'use strict'
 const crypto = require('crypto');
+const moment = require('moment'); 
 
 function intToBytes(num) {
 	let bytes = [];
 
-	for(let i=7 ; i>=0 ; --i) {
+	for(let i=7; i>=0 ; --i) {
 		bytes[i] = num & (255);
 		num = num >> 8;
 	}
@@ -116,7 +117,7 @@ const totp = {};
 totp.gen = (key, opt) => {
     opt = opt || {};
     let time = opt.time || 30;
-    let _t = Date.now();
+    let _t = moment().unix();
    // Determine the value of the counter, C
     // This is the number of time steps in seconds since T0
     opt.counter = Math.floor((_t / 1000) / time);
@@ -126,11 +127,11 @@ totp.gen = (key, opt) => {
 totp.verify = (token, key, opt) => {
 	opt = opt || {};
 	let time = opt.time || 30;
-	let _t = Date.now();
-
+	let _t = moment().unix();
+	console.log(_t);
 	// Determine the value of the counter, C
 	// This is the number of time steps in seconds since T0
-	opt.counter = Math.floor((_t / 1000) / time);
+	opt.counter = Math.floor((_t) / time);
 	//if we want allow to validate token but with sync value!=0
 	//opt._totp = true;
 	return hotp.verify(token, key, opt);

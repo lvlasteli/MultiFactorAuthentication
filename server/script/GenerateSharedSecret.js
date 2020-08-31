@@ -1,10 +1,11 @@
-const crypto = require('crypto');
+let crypto = require('crypto');
 const User = require('../user/user.model');
+const aes256 = require('aes256');
 require('dotenv').config();
 
-function GetUserID(useremail)
+function GetUserID(userEmail)
 {
-    return User.findOne( {where: { email: useremail } })
+    return User.findOne({where: { email: userEmail }})
     .then((result) => {
         return result.id;
     })
@@ -14,16 +15,16 @@ function GetUserID(useremail)
 }
 
 
-async function GenerateSharedKey(useremail) {
+async function GenerateSharedKey(userEmail) {
     //Is unsafe to store it in enviroment variable
     const key = process.env.MASTER_KEY;
     const algorithm = 'sha512';
-    let text = await GetUserID(useremail);
+    let text = await GetUserID(userEmail);
     text = text + Date.now();
-    const hmac = crypto.createHmac(algorithm, key).update(text).digest('hex');
-    User.update( { shared_key: hmac },
-        { where: { email: useremail } });
-    return hmac;
+    const sharedSecret = crypto.createHmac(algorithm, key).update(text).digest('hex');
+    const encryptedSharedSecret = aes256.encrypt(key, sharedSecret);
+    User.update({ shared_key: encryptedSharedSecret }, { where: { email: userEmail } });
+    return sharedSecret;
 }
 
 module.exports = GenerateSharedKey;
