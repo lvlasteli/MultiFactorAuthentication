@@ -32,7 +32,7 @@
     "pg-hstore": "^2.3.2",
     "qrcode.vue": "^1.6.1",
     "rate-limiter-flexible": "^0.21.2",
-    "sequelize": "^4.39.1",
+    "sequelize": "^5.15.1",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "vuelidate": "^0.7.4",
