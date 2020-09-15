@@ -25,8 +25,7 @@ export async function SingUp(data){
 }
 export function GetQrCode(data) {
   const token = localStorage.getItem('token');
-  const useremail= localStorage.getItem('useremail');
-  const authHeader = {'Authorization': `${useremail} ${token}`};
+  const authHeader = {'Authorization': `Bearer ${token}`};
   return axios.post(process.env.VUE_APP_API_QRCODE_URL, data, { headers: authHeader }
   ).then((response) => {
     return response.data;
@@ -37,8 +36,7 @@ export function GetQrCode(data) {
 
 export function Enable2FA(data) {
   const token = localStorage.getItem('token');
-  const useremail= localStorage.getItem('useremail');
-  const authHeader = {'Authorization': `${useremail} ${token}`};
+  const authHeader = {'Authorization': `Bearer ${token}`};
   return axios.put(process.env.VUE_APP_API_ENABLE2FA, data, { headers: authHeader }
   ).then((response) => {
     return response;
@@ -47,26 +45,23 @@ export function Enable2FA(data) {
 
 export function ValidateCode(data) {
   const token = localStorage.getItem('token');
-  const useremail= localStorage.getItem('useremail');
-  const authHeader = {'Authorization': `${useremail} ${token}`};
+  const authHeader = {'Authorization': `Bearer ${token}`};
   return axios.post(process.env.VUE_APP_API_VALIDATE, data, { headers: authHeader }
   ).then((response) => {
     return response.data;
-  });
+  })
 }
 
 export function ConfirmAuth(data) {
   const token = localStorage.getItem('token');
-  const useremail= localStorage.getItem('useremail');
-  const authHeader = {'Authorization': `${useremail} ${token}`};
+  const authHeader = {'Authorization': `Bearer ${token}`};
   return axios.put(process.env.VUE_APP_API_SUCCESS, data, { headers: authHeader });
 }
 
 
 export function ResetQRCode(data) {
   const token = localStorage.getItem('token');
-  const useremail= localStorage.getItem('useremail');
-  const authHeader = {'Authorization': `${useremail} ${token}`};
+  const authHeader = {'Authorization': `Bearer ${token}`};
   return axios.put(process.env.VUE_APP_API_RESETQRCODE_URL, data, { headers: authHeader }
     ).then((response) => {
       return response.data;

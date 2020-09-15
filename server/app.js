@@ -41,8 +41,7 @@ app.use((error, req, res) => {
     }
   });
 });
-  
-app.listen(8000, () => {
+app.listen(process.env.SERVER_PORT, () => {
     const host = process.env.POSTGRES_HOST;
     const port = process.env.SERVER_PORT;
     console.log('App listening at http://%s:%s', host, port);

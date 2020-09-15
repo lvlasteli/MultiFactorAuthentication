@@ -9,7 +9,7 @@
     "create_populate": "npm run create && npm run populate",
     "populate": "node server/script/DummyData.js",
     "server": "nodemon server/app.js",
-    "client": "vue-cli-service serve"
+    "client": "vue-cli-service serve --port 3000"
   },
   "dependencies": {
     "@babel/polyfill": "^7.0.0-rc.1",

@@ -109,7 +109,7 @@ router.post('/qrcode/validate', checkTries, checkAuth, (req, res) => {
         if(reply) {
             return res.status(200).json({ message: "Code valid!", result: true });
         } else {
-            return res.status(400).json({ message: "Code invalid!", result: false });
+            return res.status(200).json({ message: "Code invalid!", result: false });
         }
     })
 });
