@@ -15,7 +15,7 @@
     "@babel/polyfill": "^7.0.0-rc.1",
     "aes256": "^1.0.4",
     "assert": "^1.4.1",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "crypto": "^1.0.1",
